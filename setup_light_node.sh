@@ -80,6 +80,14 @@ if [ -z "$GRPC_URL" ]; then
   GRPC_URL="34.31.74.109:9090"
 fi
 
+echo "选择 ZK_PROVER_URL（输入 1 使用本地 http://127.0.0.1:3001，输入 2 使用 https://layeredge.mintair.xyz/，按 Enter 默认 1）："
+read -r ZK_CHOICE
+if [ "$ZK_CHOICE" = "2" ]; then
+  ZK_PROVER_URL="https://layeredge.mintair.xyz/"
+else
+  ZK_PROVER_URL="http://127.0.0.1:3001"
+fi
+
 echo "测试 GRPC_URL 可达性: $GRPC_URL..."
 GRPC_HOST=$(echo $GRPC_URL | cut -d: -f1)
 GRPC_PORT=$(echo $GRPC_URL | cut -d: -f2)
@@ -92,9 +100,9 @@ echo "设置环境变量..."
 cat << EOF > $WORK_DIR/.env
 GRPC_URL=$GRPC_URL
 CONTRACT_ADDR=cosmos1ufs3tlq4umljk0qfe8k5ya0x6hpavn897u2cnf9k0en9jr7qarqqt56709
-ZK_PROVER_URL=http://127.0.0.1:3001
+ZK_PROVER_URL=$ZK_PROVER_URL
 API_REQUEST_TIMEOUT=100
-POINTS_API=http://127.0.0.1:8080
+POINTS_API=https://light-node.layeredge.io
 PRIVATE_KEY='$PRIVATE_KEY'
 EOF
 if [ ! -f "$WORK_DIR/.env" ]; then
@@ -147,3 +155,4 @@ echo "所有服务已启动！"
 echo "检查日志："
 echo "- risc0-merkle-service: $WORK_DIR/risc0-merkle-service/risc0.log"
 echo "- light-node: $WORK_DIR/light-node.log"
+echo "若需连接仪表板，请访问 dashboard.layeredge.io 并使用公钥链接"
